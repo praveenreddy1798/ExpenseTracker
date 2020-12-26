@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xpense Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <script
+			defer
+			src="https://use.fontawesome.com/releases/v5.7.2/js/all.js"
+			integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP"
+			crossorigin="anonymous"
+		></script>
+</head>
+<body>
+    
+    <nav class="navbar navbar-dark bg-dark">
+        <span class="navbar-brand mb-0 pl-2 h1">Xpense Tracker</span>
+        <span class ="navbar-brand mb-0 pl-2 h1" id="headingTotalExpense"></span>
+    </nav><div class="container-fluid bg-light" style="min-height: 100vh">
+			<div class="container">
+                
+				<div class="jumbotron mt-4">
+					<div class="input-group mb-3">
+						<input
+							type="text"
+							class="form-control"
+							placeholder="Amount spent"
+							aria-label="Amount spent"
+                            aria-describedby="spent in rupee"
+                            id ="inputAmount"
+                            
+						/>
+						<div class="input-group-append">
+							<span class="input-group-text" id="spent in rupee">₹</span>
+						</div>
+					</div>
+					<div class="input-group mb-3">
+						<div class="input-group-prepend">
+							<span class="input-group-text" id="spent at">@</span>
+						</div>
+						<input
+							type="text"
+							class="form-control"
+							placeholder="spent On"
+							aria-label="spent On"
+                            aria-describedby="spent at"
+                            id ="inputDescription"
+						/>
+						<div class="input-group-append">
+							<button class="btn btn-outline-primary" type="button" id="btnAddExpense">Add</button>
+						</div>
+					</div>
+                </div>
+                <div>
+                <ul class="list-group" id="expenseTable">
+                
+
+    
+    
+    <script>
+        let allExpenses=[];
+        let totalExpense = 0;
+        const headingElement = document.querySelector("#headingTotalExpense");
+        headingElement.textContent=`${totalExpense}`;
+        const description = document.querySelector("#inputDescription")
+        const expenseTable = document.querySelector("#expenseTable")
+        const addTotalExpense =()=>{
+
+            const expenses={};
+            const inputElement = document.querySelector('#inputAmount')
+            const inputAmount = parseInt(inputElement.value,10);
+            if (description.value === "")
+            return alert('Fill in the required fields')
+            if(inputAmount==0 || isNaN(inputAmount))
+            return  alert('Add a valid expense amount')
+            if(!isNaN(description.value))
+            return alert('Add a valid expense description')
+            totalExpense+=inputAmount;
+            const descriptionValue = description.value ;
+            expenses.desc = descriptionValue;
+            expenses.amount=inputAmount;
+            expenses.date=new Date();
+            console.log(expenses);
+            allExpenses.push(expenses);
+           render(allExpenses,totalExpense)
+           inputElement.value=""
+           description.value=""
+       
+        }
+      
+
+        const element = document.querySelector("#btnAddExpense");
+         element.addEventListener("click",addTotalExpense,false); 
+
+         const deleteExpense=(dateValue)=>{
+               const newArr = allExpenses.filter((expense)=>{
+                   if(expense.date.valueOf()!==dateValue){
+                       return expense
+                   }
+                   if(totalExpense>0)
+                   totalExpense-=expense.amount
+                })
+               render(newArr,totalExpense);
+            }
+             function getDateString(date){
+                return date.toLocaleDateString('en-US',{
+                 year:'numeric',
+                 month:'long',
+                 day:'numeric',
+             })
+             }
+           const render=(arrOfList,totalExpense)=>{
+           const expenseTableContent= arrOfList.map((expense)=>listHtml(expense))
+           expenseTable.innerHTML = expenseTableContent.join('');
+           headingElement.textContent=`Total: ${totalExpense}`;
+           allExpenses = arrOfList;
+
+           }
+         const listHtml =({desc,amount,date})=>{
+            return`
+               <li class="list-group-item d-flex justify-content-between">
+							<div class="d-flex flex-column">
+								${desc}
+								<small class="text-muted">${getDateString(date)}</small>
+							</div>
+							<div>
+								<span class="px-5">
+									${amount}
+								</span>
+								<button type="button" class="btn btn-outline-danger btn-sm" id="deleteButton" onclick="deleteExpense(${date.valueOf()})">
+									<i class="fas fa-trash-alt"></i>
+								</button>
+							</div>
+						</li>
+               `
+         }
+        </script>
+        </ul>
+        
+        </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
